@@ -38,7 +38,7 @@ class LossLayer : public Layer<Dtype> {
    *        one in the prototxt, etc.).
    */
   virtual inline bool AutoTopBlobs() const { return true; }
-  virtual inline int ExactNumTopBlobs() const { return 1; }
+  virtual inline int ExactNumTopBlobs() const { return 1; }//一个loss层
   /**
    * We usually cannot backpropagate to the labels; ignore force_backward for
    * these inputs.

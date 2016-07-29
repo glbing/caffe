@@ -179,13 +179,14 @@ caffe::SolverAction::Enum GetRequestedAction(
 // Train / Finetune a model.
 int train() {
   CHECK_GT(FLAGS_solver.size(), 0) << "Need a solver definition to train.";
+  //FLAGS_solver 是命令行参数 -slover
   CHECK(!FLAGS_snapshot.size() || !FLAGS_weights.size())
       << "Give a snapshot to resume training or weights to finetune "
       "but not both.";
   vector<string> stages = get_stages_from_flags();
 
-  caffe::SolverParameter solver_param;
-  caffe::ReadSolverParamsFromTextFileOrDie(FLAGS_solver, &solver_param);
+  caffe::SolverParameter solver_param;//proto参数
+  caffe::ReadSolverParamsFromTextFileOrDie(FLAGS_solver, &solver_param);//读取slover prototxt
 
   solver_param.mutable_train_state()->set_level(FLAGS_level);
   for (int i = 0; i < stages.size(); i++) {
@@ -203,13 +204,14 @@ int train() {
           FLAGS_gpu = "" + boost::lexical_cast<string>(0);
       }
   }
-
+  //-gpu  参数
   vector<int> gpus;
-  get_gpus(&gpus);
+  get_gpus(&gpus);//get_gpus()函数通过FLAGS_gpu获取
   if (gpus.size() == 0) {
     LOG(INFO) << "Use CPU.";
     Caffe::set_mode(Caffe::CPU);
-  } else {
+  } 
+  else {
     ostringstream s;
     for (int i = 0; i < gpus.size(); ++i) {
       s << (i ? ", " : "") << gpus[i];
@@ -235,7 +237,7 @@ int train() {
   shared_ptr<caffe::Solver<float> >
       solver(caffe::SolverRegistry<float>::CreateSolver(solver_param));
 
-  solver->SetActionFunction(signal_handler.GetActionFunction());
+  solver->SetActionFunction(signal_handler.GetActionFunction());// // Solver对象中方法的使用
 
   if (FLAGS_snapshot.size()) {
     LOG(INFO) << "Resuming from " << FLAGS_snapshot;
@@ -420,10 +422,10 @@ int time() {
   return 0;
 }
 RegisterBrewFunction(time);
-
+//主函数
 int main(int argc, char** argv) {
   // Print output to stderr (while still logging).
-  FLAGS_alsologtostderr = 1;
+  FLAGS_alsologtostderr = 1;//允许打印错误信息
   // Set version
   gflags::SetVersionString(AS_STRING(CAFFE_VERSION));
   // Usage message.
@@ -435,12 +437,14 @@ int main(int argc, char** argv) {
       "  device_query    show GPU diagnostic information\n"
       "  time            benchmark model execution time");
   // Run tool or show usage.
-  caffe::GlobalInit(&argc, &argv);
+  caffe::GlobalInit(&argc, &argv);//用命令行参数初始化flags
+  //build/tools/caffe train -solver examples/myfile/solver.prototxt
+  //rain为caffe指令第1个参数，然后第2个参数是指定的solver文件
   if (argc == 2) {
 #ifdef WITH_PYTHON_LAYER
     try {
 #endif
-      return GetBrewFunction(caffe::string(argv[1]))();
+      return GetBrewFunction(caffe::string(argv[1]))();//执行train函数
 #ifdef WITH_PYTHON_LAYER
     } catch (bp::error_already_set) {
       PyErr_Print();

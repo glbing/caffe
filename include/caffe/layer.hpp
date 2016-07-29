@@ -81,7 +81,7 @@ class Layer {
    *     the preshaped input blobs, whose data fields store the input data for
    *     this layer
    * @param top
-   *     the allocated but unshaped output blobs
+   *     the allocated 分配的but unshaped output blobs
    *
    * This method should do one-time layer specific setup. This includes reading
    * and processing relevent parameters from the <code>layer_param_</code>.
@@ -213,7 +213,7 @@ class Layer {
   /**
    * @brief Returns the layer type.
    */
-  virtual inline const char* type() const { return ""; }
+  virtual inline const char* type() const { return ""; }//
 
   /**
    * @brief Returns the exact number of bottom blobs required by the layer,
@@ -453,10 +453,10 @@ inline Dtype Layer<Dtype>::Forward(const vector<Blob<Dtype>*>& bottom,
   // Lock during forward to ensure sequential forward
   Lock();
   Dtype loss = 0;
-  Reshape(bottom, top);
-  switch (Caffe::mode()) {
+  Reshape(bottom, top);//调整形状
+  switch (Caffe::mode()) {//模式选择
   case Caffe::CPU:
-    Forward_cpu(bottom, top);
+    Forward_cpu(bottom, top);//前向计算，纯虚函数，需要子类重写
     for (int top_id = 0; top_id < top.size(); ++top_id) {
       if (!this->loss(top_id)) { continue; }
       const int count = top[top_id]->count();

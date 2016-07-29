@@ -21,16 +21,16 @@ SyncedMemory::~SyncedMemory() {
   }
 #endif  // CPU_ONLY
 }
-
+//把数据放到cpu上
 inline void SyncedMemory::to_cpu() {
   switch (head_) {
-  case UNINITIALIZED:
+  case UNINITIALIZED://未分配空间
     CaffeMallocHost(&cpu_ptr_, size_, &cpu_malloc_use_cuda_);
     caffe_memset(size_, 0, cpu_ptr_);
     head_ = HEAD_AT_CPU;
     own_cpu_data_ = true;
     break;
-  case HEAD_AT_GPU:
+  case HEAD_AT_GPU://在GPU上
 #ifndef CPU_ONLY
     if (cpu_ptr_ == NULL) {
       CaffeMallocHost(&cpu_ptr_, size_, &cpu_malloc_use_cuda_);
@@ -42,12 +42,12 @@ inline void SyncedMemory::to_cpu() {
     NO_GPU;
 #endif
     break;
-  case HEAD_AT_CPU:
+  case HEAD_AT_CPU://不采取操作
   case SYNCED:
     break;
   }
 }
-
+//把数据放到gpu上
 inline void SyncedMemory::to_gpu() {
 #ifndef CPU_ONLY
   switch (head_) {
@@ -77,10 +77,10 @@ inline void SyncedMemory::to_gpu() {
 }
 
 const void* SyncedMemory::cpu_data() {
-  to_cpu();
-  return (const void*)cpu_ptr_;
+  to_cpu();//放到cpu
+  return (const void*)cpu_ptr_;//返回指针
 }
-
+//释放CPU内存
 void SyncedMemory::set_cpu_data(void* data) {
   CHECK(data);
   if (own_cpu_data_) {
@@ -94,13 +94,13 @@ void SyncedMemory::set_cpu_data(void* data) {
 const void* SyncedMemory::gpu_data() {
 #ifndef CPU_ONLY
   to_gpu();
-  return (const void*)gpu_ptr_;
+  return (const void*)gpu_ptr_;//返回GPU指针
 #else
   NO_GPU;
   return NULL;
 #endif
 }
-
+//释放G//PU内存
 void SyncedMemory::set_gpu_data(void* data) {
 #ifndef CPU_ONLY
   CHECK(data);
@@ -123,8 +123,8 @@ void SyncedMemory::set_gpu_data(void* data) {
 
 void* SyncedMemory::mutable_cpu_data() {
   to_cpu();
-  head_ = HEAD_AT_CPU;
-  return cpu_ptr_;
+  head_ = HEAD_AT_CPU;//改变状态
+  return cpu_ptr_;//返回指针，一般调用这个函数是指针指向的数据要改变
 }
 
 void* SyncedMemory::mutable_gpu_data() {

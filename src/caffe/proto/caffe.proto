@@ -391,6 +391,7 @@ message LayerParameter {
   optional PReLUParameter prelu_param = 131;
   optional PythonParameter python_param = 130;
   optional RecurrentParameter recurrent_param = 146;
+  optional TripletLossParameter triplet_loss_param = 147;//my TripletLossParameter 
   optional ReductionParameter reduction_param = 136;
   optional ReLUParameter relu_param = 123;
   optional ReshapeParameter reshape_param = 133;
@@ -1397,3 +1398,8 @@ message PReLUParameter {
   // Whether or not slope paramters are shared across channels.
   optional bool channel_shared = 2 [default = false];
 }
+
+message TripletLossParameter {  
+     // triplet的距离参数a
+    optional float margin = 1 [default = 1.0];   
+} 

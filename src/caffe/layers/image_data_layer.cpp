@@ -25,7 +25,8 @@ ImageDataLayer<Dtype>::~ImageDataLayer<Dtype>() {
 template <typename Dtype>
 void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
-  const int new_height = this->layer_param_.image_data_param().new_height();
+  // 根据参数文件设置参数图像的高度、宽度、是否彩色图像、图像目录 
+  const int new_height = this->layer_param_.image_data_param().new_height();//layer_param_:基类layer的protobuf stores the layer parameters
   const int new_width  = this->layer_param_.image_data_param().new_width();
   const bool is_color  = this->layer_param_.image_data_param().is_color();
   string root_folder = this->layer_param_.image_data_param().root_folder();
@@ -36,18 +37,18 @@ void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   // Read the file with filenames and labels
   const string& source = this->layer_param_.image_data_param().source();
   LOG(INFO) << "Opening file " << source;
-  std::ifstream infile(source.c_str());
+  std::ifstream infile(source.c_str());//以输入方式打开文件
   string line;
   size_t pos;
   int label;
-  while (std::getline(infile, line)) {
+  while (std::getline(infile, line)) {//按行读取路径和文件名
     pos = line.find_last_of(' ');
     label = atoi(line.substr(pos + 1).c_str());
-    lines_.push_back(std::make_pair(line.substr(0, pos), label));
+    lines_.push_back(std::make_pair(line.substr(0, pos), label));//将图片路径和标签存储到数据成std::pair
   }
 
   CHECK(!lines_.empty()) << "File is empty";
-
+  //是否需要打乱图片的顺序
   if (this->layer_param_.image_data_param().shuffle()) {
     // randomly shuffle data
     LOG(INFO) << "Shuffling data";
@@ -64,30 +65,31 @@ void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
         this->layer_param_.image_data_param().rand_skip();
     LOG(INFO) << "Skipping first " << skip << " data points.";
     CHECK_GT(lines_.size(), skip) << "Not enough points to skip";
-    lines_id_ = skip;
+    lines_id_ = skip;//设置 lines_id_
   }
   // Read an image, and use it to initialize the top blob.
   cv::Mat cv_img = ReadImageToCVMat(root_folder + lines_[lines_id_].first,
                                     new_height, new_width, is_color);
   CHECK(cv_img.data) << "Could not load " << lines_[lines_id_].first;
   // Use data_transformer to infer the expected blob shape from a cv_image.
-  vector<int> top_shape = this->data_transformer_->InferBlobShape(cv_img);
-  this->transformed_data_.Reshape(top_shape);
+  vector<int> top_shape = this->data_transformer_->InferBlobShape(cv_img);//数据成员data_transformer_对应prototxt的输入数据的参数
+  this->transformed_data_.Reshape(top_shape);//设置transformed_data_的形状
   // Reshape prefetch_data and top[0] according to the batch_size.
   const int batch_size = this->layer_param_.image_data_param().batch_size();
   CHECK_GT(batch_size, 0) << "Positive batch size required";
   top_shape[0] = batch_size;
-  for (int i = 0; i < this->PREFETCH_COUNT; ++i) {
+  for (int i = 0; i < this->PREFETCH_COUNT; ++i) {//PREFETCH_COUNT = 3
     this->prefetch_[i].data_.Reshape(top_shape);
   }
-  top[0]->Reshape(top_shape);
-
+  top[0]->Reshape(top_shape);//设置输出数据的形状
+  //4维数组
   LOG(INFO) << "output data size: " << top[0]->num() << ","
       << top[0]->channels() << "," << top[0]->height() << ","
       << top[0]->width();
-  // label
-  vector<int> label_shape(1, batch_size);
+  // 设置label的形状
+  vector<int> label_shape(1, batch_size);//容器含有1个值为batch_size的元素
   top[1]->Reshape(label_shape);
+    // 设置预取数组中类标的形状  
   for (int i = 0; i < this->PREFETCH_COUNT; ++i) {
     this->prefetch_[i].label_.Reshape(label_shape);
   }
@@ -110,6 +112,7 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   CPUTimer timer;
   CHECK(batch->data_.count());
   CHECK(this->transformed_data_.count());
+  //获取层参数
   ImageDataParameter image_data_param = this->layer_param_.image_data_param();
   const int batch_size = image_data_param.batch_size();
   const int new_height = image_data_param.new_height();
@@ -134,7 +137,7 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
 
   // datum scales
   const int lines_size = lines_.size();
-  for (int item_id = 0; item_id < batch_size; ++item_id) {
+  for (int item_id = 0; item_id < batch_size; ++item_id) {//
     // get a blob
     timer.Start();
     CHECK_GT(lines_size, lines_id_);
@@ -146,7 +149,7 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
     // Apply transformations (mirror, crop...) to the image
     int offset = batch->data_.offset(item_id);
     this->transformed_data_.set_cpu_data(prefetch_data + offset);
-    this->data_transformer_->Transform(cv_img, &(this->transformed_data_));
+    this->data_transformer_->Transform(cv_img, &(this->transformed_data_));//进行预处理
     trans_time += timer.MicroSeconds();
 
     prefetch_label[item_id] = lines_[lines_id_].second;

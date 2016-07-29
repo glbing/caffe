@@ -18,9 +18,9 @@ namespace caffe {
  *        softmax to get a probability distribution over classes.
  *
  * This layer should be preferred over separate
- * SoftmaxLayer + MultinomialLogisticLossLayer
- * as its gradient computation is more numerically stable.
- * At test time, this layer can be replaced simply by a SoftmaxLayer.
+ * SoftmaxLayer + MultinomialLogisticLossLayer//2个层接起来的功能
+ * as its gradient computation is more numerically stable.//梯度计算更稳当
+ * At test time, this layer can be replaced simply by a SoftmaxLayer.//测试的时候换成SoftmaxLayer
  *
  * @param bottom input Blob vector (length 2)
  *   -# @f$ (N \times C \times H \times W) @f$
@@ -107,7 +107,7 @@ class SoftmaxWithLossLayer : public LossLayer<Dtype> {
   virtual Dtype get_normalizer(
       LossParameter_NormalizationMode normalization_mode, int valid_count);
 
-  /// The internal SoftmaxLayer used to map predictions to a distribution.
+  /// The internal SoftmaxLayer 内置SoftmaxLayer used to map predictions to a distribution.
   shared_ptr<Layer<Dtype> > softmax_layer_;
   /// prob stores the output probability predictions from the SoftmaxLayer.
   Blob<Dtype> prob_;

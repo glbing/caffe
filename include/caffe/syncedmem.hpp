@@ -24,7 +24,7 @@ inline void CaffeMallocHost(void** ptr, size_t size, bool* use_cuda) {
   *use_cuda = false;
   CHECK(*ptr) << "host allocation of size " << size << " failed";
 }
-
+//释放指针指向的内存空间
 inline void CaffeFreeHost(void* ptr, bool use_cuda) {
 #ifndef CPU_ONLY
   if (use_cuda) {
@@ -70,6 +70,7 @@ class SyncedMemory {
  private:
   void to_cpu();
   void to_gpu();
+  //指向内存的指针
   void* cpu_ptr_;
   void* gpu_ptr_;
   size_t size_;

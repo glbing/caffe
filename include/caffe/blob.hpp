@@ -20,7 +20,7 @@ namespace caffe {
  *
  * TODO(dox): more thorough description.
  */
-template <typename Dtype>
+template <typename Dtype>//Dtype是blob的数据类型
 class Blob {
  public:
   Blob()
@@ -266,12 +266,12 @@ class Blob {
   bool ShapeEquals(const BlobProto& other);
 
  protected:
-  shared_ptr<SyncedMemory> data_;
+  shared_ptr<SyncedMemory> data_;//指向SyncedMemory的智能指针
   shared_ptr<SyncedMemory> diff_;
   shared_ptr<SyncedMemory> shape_data_;
   vector<int> shape_;
-  int count_;
-  int capacity_;
+  int count_;//=个数*通道数*高度*宽度
+  int capacity_;//当前的count
 
   DISABLE_COPY_AND_ASSIGN(Blob);
 };  // class Blob

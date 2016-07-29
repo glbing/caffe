@@ -38,7 +38,7 @@ class SoftmaxLayer : public Layer<Dtype> {
 
   int outer_num_;
   int inner_num_;
-  int softmax_axis_;
+  int softmax_axis_;//softmax的类别
   /// sum_multiplier is used to carry out sum using BLAS
   Blob<Dtype> sum_multiplier_;
   /// scale is an intermediate Blob to hold temporary results.

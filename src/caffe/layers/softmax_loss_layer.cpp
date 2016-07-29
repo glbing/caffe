@@ -15,10 +15,10 @@ void SoftmaxWithLossLayer<Dtype>::LayerSetUp(
   softmax_param.set_type("Softmax");
   softmax_layer_ = LayerRegistry<Dtype>::CreateLayer(softmax_param);
   softmax_bottom_vec_.clear();
-  softmax_bottom_vec_.push_back(bottom[0]);
+  softmax_bottom_vec_.push_back(bottom[0]);//
   softmax_top_vec_.clear();
-  softmax_top_vec_.push_back(&prob_);
-  softmax_layer_->SetUp(softmax_bottom_vec_, softmax_top_vec_);
+  softmax_top_vec_.push_back(&prob_);//概率
+  softmax_layer_->SetUp(softmax_bottom_vec_, softmax_top_vec_);//
 
   has_ignore_label_ =
     this->layer_param_.loss_param().has_ignore_label();
@@ -89,7 +89,8 @@ template <typename Dtype>
 void SoftmaxWithLossLayer<Dtype>::Forward_cpu(
     const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
   // The forward pass computes the softmax prob values.
-  softmax_layer_->Forward(softmax_bottom_vec_, softmax_top_vec_);
+  // Forward_cpu函数计算拉直的向量（经过全连接）经过softmax属于哪一类的概率
+  softmax_layer_->Forward(softmax_bottom_vec_, softmax_top_vec_);//
   const Dtype* prob_data = prob_.cpu_data();
   const Dtype* label = bottom[1]->cpu_data();
   int dim = prob_.count() / outer_num_;
@@ -117,6 +118,7 @@ void SoftmaxWithLossLayer<Dtype>::Forward_cpu(
 template <typename Dtype>
 void SoftmaxWithLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  //计算梯度
   if (propagate_down[1]) {
     LOG(FATAL) << this->type()
                << " Layer cannot backpropagate to label inputs.";

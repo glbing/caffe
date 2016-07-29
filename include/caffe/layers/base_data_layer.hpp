@@ -31,6 +31,7 @@ class BaseDataLayer : public Layer<Dtype> {
   virtual void DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {}
   // Data layers have no bottoms, so reshaping is trivial.
+  // 数据层没有bottoms，所以reshape函数没有用
   virtual void Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {}
 
@@ -40,7 +41,7 @@ class BaseDataLayer : public Layer<Dtype> {
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {}
 
  protected:
-  TransformationParameter transform_param_;
+  TransformationParameter transform_param_;// 对输入的数据进行变换的参数，这其中包括是否需要mirror，是否需要crop,是否需要减去meanfile，是否需要scale  
   shared_ptr<DataTransformer<Dtype> > data_transformer_;
   bool output_labels_;
 };
@@ -48,7 +49,7 @@ class BaseDataLayer : public Layer<Dtype> {
 template <typename Dtype>
 class Batch {
  public:
-  Blob<Dtype> data_, label_;
+  Blob<Dtype> data_, label_;//all data in blob
 };
 
 template <typename Dtype>
@@ -78,7 +79,7 @@ class BasePrefetchingDataLayer :
   BlockingQueue<Batch<Dtype>*> prefetch_free_;
   BlockingQueue<Batch<Dtype>*> prefetch_full_;
 
-  Blob<Dtype> transformed_data_;
+  Blob<Dtype> transformed_data_;//预处理后的数据
 };
 
 }  // namespace caffe
