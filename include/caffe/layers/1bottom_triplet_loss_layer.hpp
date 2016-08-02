@@ -14,7 +14,7 @@ template <typename Dtype>
     virtual void LayerSetUp(const vector<Blob<Dtype>*>& bottom,
                             const vector<Blob<Dtype>*>& top);
     virtual inline int ExactNumBottomBlobs() const { return 2; }//
-    virtual inline const char* type() const { return "TripletLoss"; }
+    virtual inline const char* type() const { return "Triplet1Loss"; }
     /**
      * Unlike most loss layers, in the Triplet1LossLayer we can backpropagate
      * to the first three inputs.
