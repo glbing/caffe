@@ -61,13 +61,13 @@ void Triplet1LossLayer<Dtype>::Forward_cpu(
   {
     //diff_ap_
     caffe_sub(dim,bottom[0]->cpu_data()+i*(2+num_triplets)*dim,
-      bottom[0]->cpu_data()+((i+1)*(2+num_triplets)*dim),diff_ap_.mutable_cpu_data()+i*dim);
+      bottom[0]->cpu_data()+((2+num_triplets)*i+1)*dim,diff_ap_.mutable_cpu_data()+i*dim);
     //diff_an_
     caffe_sub(dim,bottom[0]->cpu_data()+i*(2+num_triplets)*dim,
-      bottom[0]->cpu_data()+((i+2)*(2+num_triplets)*dim),diff_an_.mutable_cpu_data()+i*dim);
+      bottom[0]->cpu_data()+((2+num_triplets)*i+2)*dim,diff_an_.mutable_cpu_data()+i*dim);
     //diff_pn_
-    caffe_sub(dim,bottom[0]->cpu_data()+(i+1)*(2+num_triplets)*dim,
-      bottom[0]->cpu_data()+((i+2)*(2+num_triplets)*dim),diff_pn_.mutable_cpu_data()+i*dim);
+    caffe_sub(dim,bottom[0]->cpu_data()+((2+num_triplets)*i+1)*dim,
+      bottom[0]->cpu_data()+((2+num_triplets)*i+2)*dim,diff_pn_.mutable_cpu_data()+i*dim);
   }
   Dtype loss(0.0);
   //求ap和an的距离

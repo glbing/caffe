@@ -1402,5 +1402,5 @@ message PReLUParameter {
 message TripletLossParameter {  
      // triplet的距离参数a
     optional float margin = 1 [default = 1.0]; 
-    optional uint32 num_triplets=2 [default=3];  
+    optional uint32 num_triplets=2 [default=1];  
 } 
