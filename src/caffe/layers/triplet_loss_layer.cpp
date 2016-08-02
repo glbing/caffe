@@ -7,11 +7,10 @@ a_n:I-
 
 #include <algorithm>
 #include <vector>
- 
-#include "caffe/layer.hpp"
-#include"caffe/loss_layers.hpp"
-#include"caffe/util/io.hpp"
-#include"caffe/util/math_functions.hpp"
+
+#include "caffe/layers/triplet_loss_layer.hpp"
+#include "caffe/util/io.hpp"
+#include "caffe/util/math_functions.hpp"
  
 namespace caffe {
  
@@ -106,10 +105,10 @@ void TripletLossLayer<Dtype>::Forward_cpu(
 }
  
 template <typename Dtype>
-void TripletLossLayer<Dtype>::Backward_cpu(constvector<Blob<Dtype>*>& top,
+void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   const vector<bool>&propagate_down, const vector<Blob<Dtype>*>& bottom) {
   //Dtype margin =this->layer_param_.triplet_loss_param().margin();
-  const Dtype* sampleW = bottom[3]->cpu_data();
+  //const Dtype* sampleW = bottom[3]->cpu_data();//权值？？
   for (int i = 0; i < 3; ++i) {
     if (propagate_down[i]) {
       const Dtype sign = (i < 2) ? -1 : 1;
@@ -121,7 +120,7 @@ void TripletLossLayer<Dtype>::Backward_cpu(constvector<Blob<Dtype>*>& top,
         Dtype* bout =bottom[i]->mutable_cpu_diff();
         if (i==0) {  // a
          //if(dist_binary_.cpu_data()[j]>Dtype(0)){
-          caffe_cpu_axpby(channels,alpha*sampleW[j],
+          caffe_cpu_axpby(channels,alpha/**sampleW[j]*/,
             diff_pn_.cpu_data() + (j*channels),
             Dtype(0.0),bout + (j*channels));
           //}else{
@@ -130,7 +129,7 @@ void TripletLossLayer<Dtype>::Backward_cpu(constvector<Blob<Dtype>*>& top,
         }
         else if (i==1) {  // p
          //if(dist_binary_.cpu_data()[j]>Dtype(0)){
-            caffe_cpu_axpby(channels,alpha*sampleW[j],
+            caffe_cpu_axpby(channels,alpha/**sampleW[j]*/,
             diff_ap_.cpu_data() + (j*channels),
             Dtype(0.0),bout + (j*channels));
           //}else{
@@ -139,7 +138,7 @@ void TripletLossLayer<Dtype>::Backward_cpu(constvector<Blob<Dtype>*>& top,
         }
         else if (i==2) {  // n
                  //if(dist_binary_.cpu_data()[j]>Dtype(0)){
-          caffe_cpu_axpby(channels,alpha*sampleW[j],
+          caffe_cpu_axpby(channels,alpha/**sampleW[j]*/,
           diff_an_.cpu_data() + (j*channels),
           Dtype(0.0),bout + (j*channels));
                   //}else{

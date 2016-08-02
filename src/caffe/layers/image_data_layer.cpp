@@ -103,6 +103,7 @@ void ImageDataLayer<Dtype>::ShuffleImages() {
 }
 
 // This function is called on prefetch thread
+// 读取图像到data和label
 template <typename Dtype>
 void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   CPUTimer batch_timer;
@@ -114,7 +115,7 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   CHECK(this->transformed_data_.count());
   //获取层参数
   ImageDataParameter image_data_param = this->layer_param_.image_data_param();
-  const int batch_size = image_data_param.batch_size();
+  const int batch_size = image_data_param.batch_size();//batch size
   const int new_height = image_data_param.new_height();
   const int new_width = image_data_param.new_width();
   const bool is_color = image_data_param.is_color();
@@ -130,10 +131,10 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   this->transformed_data_.Reshape(top_shape);
   // Reshape batch according to the batch_size.
   top_shape[0] = batch_size;
-  batch->data_.Reshape(top_shape);
+  batch->data_.Reshape(top_shape);//调整batch的形状
 
-  Dtype* prefetch_data = batch->data_.mutable_cpu_data();
-  Dtype* prefetch_label = batch->label_.mutable_cpu_data();
+  Dtype* prefetch_data = batch->data_.mutable_cpu_data();//batch的数据
+  Dtype* prefetch_label = batch->label_.mutable_cpu_data();//batch的标签
 
   // datum scales
   const int lines_size = lines_.size();
