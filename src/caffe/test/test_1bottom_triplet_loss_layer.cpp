@@ -82,10 +82,10 @@ TYPED_TEST(Triplet1LossLayerTest, TestForward)
     Dtype dist_sq_an(0);  
     for(int j=0;j<dim;++j)
     {
-      Dtype diff_ap = this->blob_bottom_data->cpu_data()[(2+num_triplets)*i*dim+j] -
-          this->blob_bottom_data->cpu_data()[((2+num_triplets)*i+1)*dim+j];
-      Dtype diff_an = this->blob_bottom_data->cpu_data()[(2+num_triplets)*i*dim+j] -
-          this->blob_bottom_data->cpu_data()[((2+num_triplets)*i+2)*dim+j];
+      Dtype diff_ap = this->blob_bottom_data->cpu_data()[(int)((2+num_triplets)*i*dim+j)] -
+          this->blob_bottom_data->cpu_data()[(int)(((2+num_triplets)*i+1)*dim+j)];
+      Dtype diff_an = this->blob_bottom_data->cpu_data()[(int)((2+num_triplets)*i*dim+j)] -
+          this->blob_bottom_data->cpu_data()[(int)(((2+num_triplets)*i+2)*dim+j)];
       dist_sq_ap+=diff_ap*diff_ap;
       dist_sq_an+=diff_an*diff_an;
     }
