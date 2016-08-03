@@ -102,14 +102,15 @@ void Triplet1LossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   {
     int dim = bottom[0]->count()/bottom[0]->num();
     int num_set = bottom[0]->num()/(2 + num_triplets);
-    Dtype* diff=bottom[0]->mutable_cpu_data();
+
+    Dtype* diff=bottom[0]->mutable_cpu_diff();
     //bottom[0]:num*dim
     const Dtype alpha=top[0]->cpu_diff()[0]/static_cast<Dtype>(num_set);
     for(int i=0;i<num_set;++i)
     {
-      caffe_cpu_axpby(dim,Dtype(-2.0)*alpha,diff_pn_.cpu_data()+i*dim,Dtype(0.0),diff+i*(2+num_triplets)*dim);
-      caffe_cpu_axpby(dim,Dtype(-2.0)*alpha,diff_ap_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+1)*dim);
-      caffe_cpu_axpby(dim,Dtype(2.0)*alpha,diff_an_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+2)*dim);
+      caffe_cpu_axpby(dim,Dtype(-1.0)*alpha,diff_pn_.cpu_data()+i*dim,Dtype(0.0),diff+i*(2+num_triplets)*dim);
+      caffe_cpu_axpby(dim,Dtype(-1.0)*alpha,diff_ap_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+1)*dim);
+      caffe_cpu_axpby(dim,Dtype(1.0)*alpha,diff_an_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+2)*dim);
     }
   }
 }
