@@ -108,10 +108,9 @@ void Triplet1LossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     for(int i=0;i<num_set;++i)
     {
       caffe_cpu_axpby(dim,Dtype(-2.0)*alpha,diff_pn_.cpu_data()+i*dim,Dtype(0.0),diff+i*(2+num_triplets)*dim);
-      caffe_cpu_axpby(dim,Dtype(-2.0)*alpha,diff_ap_.cpu_data()+i*dim,Dtype(0.0),diff+(i+1)*(2+num_triplets)*dim);
-      caffe_cpu_axpby(dim,Dtype(2.0)*alpha,diff_an_.cpu_data()+i*dim,Dtype(0.0),diff+(i+2)*(2+num_triplets)*dim);
+      caffe_cpu_axpby(dim,Dtype(-2.0)*alpha,diff_ap_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+1)*dim);
+      caffe_cpu_axpby(dim,Dtype(2.0)*alpha,diff_an_.cpu_data()+i*dim,Dtype(0.0),diff+(i*(2+num_triplets)+2)*dim);
     }
-   
   }
 }
 #ifdef CPU_ONLY
