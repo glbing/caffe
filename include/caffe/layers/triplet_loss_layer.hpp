@@ -52,7 +52,7 @@ Blob<Dtype> diff_sq_an_;  //tmp storage for gpu forward pass: f(x_i^a)-f(x_i^p).
 Blob<Dtype> dist_sq_ap_;  //cached for backward pass:||f(x_i^a)-f(x_i^p)||^2
 Blob<Dtype> dist_sq_an_;  //cached for backward pass:||f(x_i^a)-f(x_i^n)||^2
  
-//Blob<Dtype> summer_vec_;  //tmp storage for gpu forward pass[ 1, 1, 1,...,1 ]
+Blob<Dtype> summer_vec_;  //tmp storage for gpu forward pass[ 1, 1, 1,...,1 ]
 //Blob<Dtype> dist_binary_; // tmp storage for gpu forward pass
 
 

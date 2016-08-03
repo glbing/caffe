@@ -12,6 +12,7 @@ namespace caffe {
 template <typename Dtype>
 void TripletLossLayer<Dtype>::Forward_gpu(
     const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
+  /*
   const int count = bottom[0]->count();
   caffe_gpu_sub(
       count,
@@ -61,12 +62,16 @@ void TripletLossLayer<Dtype>::Forward_gpu(
 
   Dtype margin = this->layer_param_.triplet_loss_param().margin();
   Dtype loss(0.0);
-  //const Dtype* sampleW = bottom[3]->cpu_data();
+  const Dtype* sampleW = bottom[3]->cpu_data();
   for (int i = 0; i < bottom[0]->num(); ++i) {
-     loss += /*sampleW[i]**/std::max(margin +dist_sq_ap_.cpu_data()[i]- dist_sq_an_.cpu_data()[i], Dtype(0.0));
+     loss += sampleW[i]*std::max(margin +dist_sq_ap_.cpu_data()[i]- dist_sq_an_.cpu_data()[i], Dtype(0.0));
   }
   loss = loss / static_cast<Dtype>(bottom[0]->num()) / Dtype(2);
   top[0]->mutable_cpu_data()[0] = loss;
+  */
+ 
+ //
+  Forward_cpu(bottom,top);
 }
 
 template <typename Dtype>
@@ -89,6 +94,7 @@ __global__ void CLLBackward(const int count, const int channels,
 template <typename Dtype>
 void TripletLossLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
     const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  /*
   Dtype margin = this->layer_param_.triplet_loss_param().margin();
   const int count = bottom[0]->count();
   const int channels = bottom[0]->channels();
@@ -132,6 +138,9 @@ void TripletLossLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
       }
     }
   }
+  */
+ 
+  Backward_cpu(top,propagate_down,top);
 }
 
 INSTANTIATE_LAYER_GPU_FUNCS(TripletLossLayer);
