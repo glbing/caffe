@@ -40,8 +40,11 @@ void SliceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
   slice_size_ = bottom[0]->count(slice_axis_ + 1);
   int count = 0;
   if (slice_point_.size() != 0) {
-    CHECK_EQ(slice_point_.size(), top.size() - 1);
+    CHECK_EQ(slice_point_.size(), top.size() - 1);//the number of indices must be equal to the number of top blobs minus one
     CHECK_LE(top.size(), bottom_slice_axis);
+
+    //下面：根据slice_point 得到存储slice_axis这个维度如何划分数量的slice
+    //如果 slice_axis=1，即对channels进行划分，则slice[i]表示top[i]的channel数量
     int prev = 0;
     vector<int> slices;
     for (int i = 0; i < slice_point_.size(); ++i) {
@@ -49,10 +52,11 @@ void SliceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
       slices.push_back(slice_point_[i] - prev);
       prev = slice_point_[i];
     }
+    //vector: slices.size() == top.size()
     slices.push_back(bottom_slice_axis - prev);
     for (int i = 0; i < top.size(); ++i) {
       top_shape[slice_axis_] = slices[i];
-      top[i]->Reshape(top_shape);
+      top[i]->Reshape(top_shape);//
       count += top[i]->count();
     }
   } else {

@@ -68,11 +68,12 @@ class Blob {
    *        "canonicalized" using CanonicalAxisIndex.
    *        Dies on out of range index.
    */
+   // 比如 batch_size=64,那么shape(0)=64
   inline int shape(int index) const {
     return shape_[CanonicalAxisIndex(index)];
   }
-  inline int num_axes() const { return shape_.size(); }
-  inline int count() const { return count_; }
+  inline int num_axes() const { return shape_.size(); }//一般为4
+  inline int count() const { return count_; }//计算blog的数据量
 
   /**
    * @brief Compute the volume of a slice; i.e., the product of dimensions
