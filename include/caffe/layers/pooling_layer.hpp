@@ -48,8 +48,8 @@ class PoolingLayer : public Layer<Dtype> {
   int stride_h_, stride_w_;
   int pad_h_, pad_w_;
   int channels_;
-  int height_, width_;
-  int pooled_height_, pooled_width_;
+  int height_, width_;//输入map的大小
+  int pooled_height_, pooled_width_;//pooling后的输出map大小
   bool global_pooling_;
   Blob<Dtype> rand_idx_;
   Blob<int> max_idx_;
