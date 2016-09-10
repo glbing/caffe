@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   if (FLAGS_shuffle) {
     // randomly shuffle data
     LOG(INFO) << "Shuffling data";
-    shuffle(lines.begin(), lines.end());
+    shuffle(lines.begin(), lines.end());//rng.h
   }
   LOG(INFO) << "A total of " << lines.size() << " images.";
 

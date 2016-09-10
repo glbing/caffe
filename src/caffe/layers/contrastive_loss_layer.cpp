@@ -38,14 +38,14 @@ void ContrastiveLossLayer<Dtype>::Forward_cpu(
       bottom[1]->cpu_data(),  // b
       diff_.mutable_cpu_data());  // a_i-b_i
   const int channels = bottom[0]->channels();
-  Dtype margin = this->layer_param_.contrastive_loss_param().margin();
+  Dtype margin = this->layer_param_.contrastive_loss_param().margin();//默认 1.0
   bool legacy_version =
-      this->layer_param_.contrastive_loss_param().legacy_version();
+      this->layer_param_.contrastive_loss_param().legacy_version();//默认为false
   Dtype loss(0.0);
   for (int i = 0; i < bottom[0]->num(); ++i) {
-    dist_sq_.mutable_cpu_data()[i] = caffe_cpu_dot(channels,
+    dist_sq_.mutable_cpu_data()[i] = caffe_cpu_dot(channels, //内积
         diff_.cpu_data() + (i*channels), diff_.cpu_data() + (i*channels));
-    if (static_cast<int>(bottom[2]->cpu_data()[i])) {  // similar pairs
+    if (static_cast<int>(bottom[2]->cpu_data()[i])) {  // similar pairs,label
       loss += dist_sq_.cpu_data()[i];
     } else {  // dissimilar pairs
       if (legacy_version) {
@@ -67,7 +67,7 @@ void ContrastiveLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   Dtype margin = this->layer_param_.contrastive_loss_param().margin();
   bool legacy_version =
       this->layer_param_.contrastive_loss_param().legacy_version();
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < 2; ++i) {//对bottom0 bottom1计算梯度
     if (propagate_down[i]) {
       const Dtype sign = (i == 0) ? 1 : -1;
       const Dtype alpha = sign * top[0]->cpu_diff()[0] /
