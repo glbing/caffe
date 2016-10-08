@@ -35,7 +35,7 @@ void SliceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
     slice_axis_ = bottom[0]->CanonicalAxisIndex(slice_param.axis());
   }
   vector<int> top_shape = bottom[0]->shape();
-  const int bottom_slice_axis = bottom[0]->shape(slice_axis_);
+  const int bottom_slice_axis = bottom[0]->shape(slice_axis_);//通道数
   num_slices_ = bottom[0]->count(0, slice_axis_);
   slice_size_ = bottom[0]->count(slice_axis_ + 1);
   int count = 0;
@@ -53,7 +53,8 @@ void SliceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
       prev = slice_point_[i];
     }
     //vector: slices.size() == top.size()
-    slices.push_back(bottom_slice_axis - prev);
+    slices.push_back(bottom_slice_axis - prev);//最后一个slice
+
     for (int i = 0; i < top.size(); ++i) {
       top_shape[slice_axis_] = slices[i];
       top[i]->Reshape(top_shape);//
